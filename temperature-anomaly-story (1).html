@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reading the Record — Exploring Climate Change</title>
+<link rel="stylesheet" href="css/styles.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3-annotation/2.5.1/d3-annotation.min.js"></script>
+</head>
+
+<body>
+  <div class="scene-stage">
+  <!-- ================= HERO ================= -->
+  <section class="scene hero active" id="scene-0" data-scene="0">
+    <div class="stripes-field" id="stripesField" aria-hidden="true"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1 class="hero-title">
+        Every year has a color now,<br>
+        and the colors are running out of blue.
+      </h1>
+      <p class="hero-blurb">
+        NASA started tracking global surface temperature change in 1980 with <a href="https://data.giss.nasa.gov/gistemp/">GISTEMP</a>, 
+        the GISS Surface Temperature Analysis. Since then, the planet's average surface temperature has climbed
+        roughly <span class="stat-inline">1.2&deg;C</span>, with almost none of that rise happened evenly. What follows is an 
+        exploration of the record, starting from the ground up.
+      </p>
+      <div class="hero-stats">
+        <div class="hstat">
+          <span class="hstat-num">+1.19&deg;C</span>
+          <span class="hstat-label">2025 global anomaly</span>
+        </div>
+        <div class="hstat">
+          <span class="hstat-num">2024</span>
+          <span class="hstat-label">warmest year on record</span>
+        </div>
+        <div class="hstat">
+          <span class="hstat-num">&times;2.6</span>
+          <span class="hstat-label">Arctic warming vs. global, last decade</span>
+        </div>
+      </div>
+    </div>
+    <span class="start-msg">Begin the record</span>
+  </section>
+
+  <!-- ================= VISUAL 1: GLOBAL TREND ================= -->
+  <section class="scene" id="scene-1" data-scene="1">
+    <div class="scene-inner">
+      <h2 class="scene-title">A flat line for decades, then a climb</h2>
+      <p class="scene-copy">
+        For the record's first seventy years, the global anomaly wobbled within about half a degree of its
+        baseline. Then, beginning around the mid-1970s, the ten-year average trend line stops wobbling and 
+        starts climbing, and it hasn't leveled off since.
+      </p>
+      <div class="chart-wrap">
+        <div id="chartGlobal" class="chart"></div>
+      </div>
+      <p class="chart-caption">Thin bars: annual global mean anomaly relative to the 1951-1980 baseline. Bold line: 10-year trailing average.</p>
+    </div>
+  </section>
+
+  <!-- ================= VISUAL 2: POLAR AMPLIFICATION ================= -->
+  <section class="scene" id="scene-2" data-scene="2">
+    <div class="scene-inner">
+      <h2 class="scene-title">The globe is not warming evenly</h2>
+      <p class="scene-copy">
+        Break the same record into latitude bands and the single global line splits apart. The tropics
+        have warmed the most steadily, tightly following the global average. In contrast, the Arctic has warmed explosively. But the Antarctic, insulated
+        by the Southern Ocean's capacity to absorb heat, has lagged behind the rest of the world.
+      </p>
+      <div class="chart-wrap">
+        <div id="chartZones" class="chart"></div>
+      </div>
+      <div class="zone-legend" id="zoneLegend"></div>
+        <p class="chart-caption">Each line is a 10-year trailing average for its latitude band.</p>
+    </div>
+  </section>
+
+  <!-- ================= INTERACTIVE ================= -->
+  <section class="scene" id="scene-3" data-scene="3">
+    <div class="scene-inner">
+      <h2 class="scene-title">Your turn &mdash; Explore the full record</h2>
+      <p class="scene-copy">
+        Choose a resolution (global, by hemisphere, or by latitude band), then hover any cell for its
+        precise value.
+      </p>
+
+      <div class="control-group">
+        <div class="view-switcher" id="viewSwitcher">
+          <button class="view-btn" data-view="global" title="Global" aria-label="Global mean">
+            <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><rect x="4" y="4" width="14" height="14" rx="1.5"/></svg>
+            <span>Global</span>
+          </button>
+          <button class="view-btn" data-view="hemisphere" title="Hemispheres" aria-label="Northern and Southern hemispheres">
+            <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><rect x="4" y="4" width="14" height="6" rx="1.5"/><rect x="4" y="12" width="14" height="6" rx="1.2"/></svg>
+            <span>Hemisphere</span>
+          </button>
+          <button class="view-btn active" data-view="zonal" title="Latitude bands" aria-label="Eight latitude bands">
+            <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><rect x="4" y="4" width="14" height="2" rx="1.5"/><rect x="4" y="7" width="14" height="2" rx="1.5"/><rect x="4" y="10" width="14" height="2" rx="1.5"/><rect x="4" y="13" width="14" height="1.5" rx="1.5"/><rect x="4" y="16" width="14" height="2" rx="0.9"/></svg>
+            <span>Latitude Band</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="explorer">
+        <div class="explorer-main">
+          <div id="heatLegend" class="heat-legend"></div>
+          <div id="heatmap" class="heatmap"></div>
+          <div id="brushAxis" class="brush-axis"></div>
+        </div>
+        <div class="explorer-side">
+          <h3 class="side-title" id="sideTitle">Average anomaly by latitude band</h3>
+          <div id="sideBars" class="side-bars"></div>
+          <button id="resetBrush" class="reset-btn">Reset to full record</button>
+        </div>
+        <div class="drag-instruction">
+            <svg width="20" height="16" viewBox="0 0 20 16" aria-hidden="true"><path d="M1 8h18M1 8l4-4M1 8l4 4M19 8l-4-4M19 8l-4 4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="explorer-hint" id="explorerHint">Selected years: 1880&ndash;2025 (full record)</div>
+            <span><strong>Drag</strong> across the timeline above to select a different time range.</span> 
+          </div>
+      </div>
+      
+      <div id="tooltip" class="tooltip" style="opacity:0;"></div>
+    </section>
+  </div>
+</div>
+
+<button class="nav-arrow nav-side nav-side-prev" id="navPrev" aria-label="Previous scene">
+  <svg width="14" height="14" viewBox="0 0 16 16"><path d="M10 2 4 8l6 6" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+<button class="nav-arrow nav-side nav-side-next" id="navNext" aria-label="Next scene">
+  <svg width="14" height="14" viewBox="0 0 16 16"><path d="M6 2l6 6-6 6" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
+<!-- <footer class="footer">
+  <p>Source: NASA Goddard Institute for Space Studies (GISS), GISTEMP v4, zonal annual means (ZonAnn.Ts+dSST).
+  Anomalies are relative to the 1951&ndash;1980 mean. Built with D3.js.</p>
+</footer> -->
+
+<script src="js/script.js" defer></script>
+</body>
+</html>
